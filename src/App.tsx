@@ -127,8 +127,8 @@ function App() {
         onTabChange={handleTabChange}
         onSearch={setGlobalSearch}
       />
-      <main className='flex-1 flex flex-col gap-3 p-4 overflow-hidden'>
-        <h1 className='text-xl font-bold text-white'>
+      <main className='flex-1 flex flex-col gap-3 p-4 overflow-hidden bg-[#CBC8DE]'>
+        <h1 className='text-2xl font-bold text-black'>
           {activeTab} <span className='text-gray-500 font-normal'>Blotter</span>
         </h1>
         <Toolbar
