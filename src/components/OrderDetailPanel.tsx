@@ -14,7 +14,6 @@ const DETAIL_TABS: DetailTab[] = ['Order Details', 'Order History'];
 const EventBadge = ({ event }: { event: string }) => {
   const baseClasses =
     'inline-block px-2 py-0.5 rounded text-[10px] font-bold text-white uppercase tracking-wider';
-
   if (event.includes('FILLED'))
     return <span className={`${baseClasses} bg-green-600`}>{event}</span>;
   if (event.includes('PLACED'))
@@ -32,22 +31,23 @@ export default function OrderDetailPanel({
   const [activeTab, setActiveTab] = useState<DetailTab>('Order Details');
 
   return (
-    <div className='flex flex-col animate-slideUp border border-[#2a3a52] min-h-[260px] font-sans'>
+    // Added bg-[#f0f4f8] and pb-4 to ensure the bottom line/area is visible
+    <div className='flex flex-col animate-slideUp border border-[#2a3a52] min-h-[300px] font-sans bg-[#f0f4f8] shadow-lg'>
       {/* Header Bar */}
-      <div className='flex items-center justify-between px-4 bg-[#1a2840] border-b border-[#2a3a52] min-h-[38px]'>
-        <span className='text-[#c8d8ee] font-semibold text-[13px]'>
+      <div className='flex items-center justify-between px-4 bg-[#1a2840] border-b border-[#2a3a52] min-h-[38px] shrink-0'>
+        <span className='text-[#c8d8ee] font-semibold text-[14px]'>
           Order Details - Equity Notes
         </span>
         <button
           onClick={onClose}
-          className='bg-[#2a3a52] border border-[#3a4f6a] text-[#94a3b8] px-[7px] py-[1px] rounded-[2px] text-[14px] leading-[1.4] hover:text-white hover:bg-[#344d66] transition-colors cursor-pointer'
+          className='bg-[#2a3a52] border border-[#3a4f6a] text-[#94a3b8] px-[8px] py-[2px] rounded-[2px] text-[14px] hover:text-white hover:bg-[#344d66] transition-colors cursor-pointer'
         >
           ✕
         </button>
       </div>
 
       {/* Tab Strip */}
-      <div className='flex bg-[#d0dcea] border-b border-[#b0bfce] px-1 pt-1 gap-[2px]'>
+      <div className='flex bg-[#d0dcea] border-b border-[#b0bfce] px-1 pt-1 gap-[2px] shrink-0'>
         {DETAIL_TABS.map((tab) => {
           const isActive = activeTab === tab;
           return (
@@ -55,10 +55,10 @@ export default function OrderDetailPanel({
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`
-                px-4 py-1.5 text-[12px] rounded-t-[4px] border-x border-t transition-all cursor-pointer
+                px-5 py-2 text-[13px] rounded-t-[4px] border-x border-t transition-all cursor-pointer
                 ${
                   isActive
-                    ? 'bg-[#f0f4f8] border-[#a0b8cc] text-[#1a2840] font-semibold -mb-[1px] z-10'
+                    ? 'bg-[#f0f4f8] border-[#a0b8cc] text-[#1a2840] font-bold -mb-[1px] z-10'
                     : 'bg-[#b8cce0] border-transparent text-[#3a5068] font-medium hover:bg-[#c6d6e8]'
                 }
               `}
@@ -69,16 +69,16 @@ export default function OrderDetailPanel({
         })}
       </div>
 
-      {/* Main Content Area */}
-      <div className='flex-1 overflow-auto bg-[#f0f4f8] p-4 flex gap-4'>
+      {/* Main Content Area - Added border-b to create the "bottom line" visually */}
+      <div className='flex-1 overflow-auto p-5 flex gap-6 border-b border-[#b0bfce]'>
         {activeTab === 'Order Details' ? (
           <>
             {/* Left: Metadata Fields */}
-            <div className='flex-[0_0_45%] min-w-0'>
-              <div className='font-bold text-[14px] text-[#1a2840] mb-3'>
+            <div className='flex-[0_0_40%] min-w-0'>
+              <div className='font-bold text-[16px] text-[#1a2840] mb-4'>
                 Order ID: {order.orderId}
               </div>
-              <div className='space-y-1'>
+              <div className='grid grid-cols-1 gap-y-1.5'>
                 {[
                   ['Order ID:', order.orderId],
                   ['Trade ID:', order.tradeId],
@@ -91,13 +91,15 @@ export default function OrderDetailPanel({
                   ['Price:', order.price.toFixed(2)],
                   ['Notional:', order.notional.toLocaleString()],
                   ['Currency:', order.currency],
-                  ['Status:', order.status],
                 ].map(([label, val]) => (
-                  <div key={label as string} className='flex gap-1 py-0.5'>
-                    <span className='text-[13px] text-[#4a6080] w-[105px] shrink-0'>
+                  <div
+                    key={label as string}
+                    className='flex items-center gap-2'
+                  >
+                    <span className='text-[14px] text-[#4a6080] w-[110px] shrink-0'>
                       {label}
                     </span>
-                    <span className='text-[13px] text-[#1a2840] font-bold truncate'>
+                    <span className='text-[14px] text-[#1a2840] font-bold truncate'>
                       {val}
                     </span>
                   </div>
@@ -107,72 +109,84 @@ export default function OrderDetailPanel({
 
             {/* Right: Quick History Table */}
             <div className='flex-1 min-w-0'>
-              <table className='w-full border-collapse text-[12px] border border-[#b0bfce] bg-white'>
-                <thead>
-                  <tr className='bg-[#dce8f0]'>
-                    {['Time', 'Event'].map((h) => (
-                      <th
-                        key={h}
-                        className='px-3 py-1.5 text-left font-semibold text-[#2a4060] border-b border-[#b0bfce]'
-                      >
-                        {h}
+              <div className='overflow-hidden rounded border border-[#b0bfce]'>
+                <table className='w-full border-collapse text-[13px] bg-white'>
+                  <thead>
+                    <tr className='bg-[#dce8f0] border-b border-[#b0bfce]'>
+                      <th className='px-4 py-2 text-left font-bold text-[#2a4060] w-[40%]'>
+                        Time
                       </th>
+                      <th className='px-4 py-2 text-left font-bold text-[#2a4060]'>
+                        Event
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {history.map((h, i) => (
+                      <tr
+                        key={i}
+                        className='border-b border-[#e0eaf2] last:border-0 hover:bg-blue-50/30'
+                      >
+                        <td className='px-4 py-2.5 text-[12px] text-[#3a5a78] font-mono'>
+                          {h.time}
+                        </td>
+                        <td className='px-4 py-2.5 text-[#1a2840] font-bold uppercase'>
+                          {h.event}
+                        </td>
+                      </tr>
                     ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        ) : (
+          /* Order History Full Tab */
+          <div className='flex-1'>
+            <div className='font-bold text-[15px] text-[#1a2840] mb-3'>
+              Order History — {order.orderId}
+            </div>
+            <div className='overflow-hidden rounded border border-[#b0bfce]'>
+              <table className='w-full border-collapse text-[13px] bg-white'>
+                <thead>
+                  <tr className='bg-[#dce8f0] border-b border-[#b0bfce]'>
+                    <th className='px-4 py-2 text-left font-bold text-[#2a4060]'>
+                      Time
+                    </th>
+                    <th className='px-4 py-2 text-left font-bold text-[#2a4060]'>
+                      Event
+                    </th>
+                    <th className='px-4 py-2 text-left font-bold text-[#2a4060]'>
+                      Details
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {history.map((h, i) => (
-                    <tr key={i} className='hover:bg-blue-50/50'>
-                      <td className='px-3 py-2 border-b border-[#e0eaf2] text-[11px] text-[#3a5a78] font-mono'>
+                    <tr
+                      key={i}
+                      className='border-b border-[#e0eaf2] last:border-0 hover:bg-blue-50/30'
+                    >
+                      <td className='px-4 py-2.5 text-[12px] text-[#3a5a78] font-mono'>
                         {h.time}
                       </td>
-                      <td className='px-3 py-2 border-b border-[#e0eaf2] text-[#1a2840] font-semibold'>
-                        {h.event}
+                      <td className='px-4 py-2.5'>
+                        <EventBadge event={h.event} />
+                      </td>
+                      <td className='px-4 py-2.5 text-[12px] text-[#4a6080]'>
+                        {h.details ?? `Symbol: ${order.symbol}`}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </>
-        ) : (
-          /* Order History Full Tab */
-          <div className='flex-1'>
-            <div className='font-bold text-[14px] text-[#1a2840] mb-2.5'>
-              Order History — {order.orderId}
-            </div>
-            <table className='w-full border-collapse text-[12px] border border-[#b0bfce] bg-white'>
-              <thead>
-                <tr className='bg-[#dce8f0]'>
-                  {['Time', 'Event', 'Details'].map((h) => (
-                    <th
-                      key={h}
-                      className='px-3 py-1.5 text-left font-semibold text-[#2a4060] border-b border-[#b0bfce]'
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {history.map((h, i) => (
-                  <tr key={i} className='hover:bg-blue-50/50'>
-                    <td className='px-3 py-2 border-b border-[#e0eaf2] text-[11px] text-[#3a5a78] font-mono'>
-                      {h.time}
-                    </td>
-                    <td className='px-3 py-2 border-b border-[#e0eaf2]'>
-                      <EventBadge event={h.event} />
-                    </td>
-                    <td className='px-3 py-2 border-b border-[#e0eaf2] text-[11px] text-[#4a6080]'>
-                      {h.details ?? `Symbol: ${order.symbol}`}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         )}
       </div>
+
+      {/* Optional Footer Spacer to ensure the bottom border of the main div is visible */}
+      <div className='h-2 bg-[#f0f4f8] shrink-0' />
     </div>
   );
 }
