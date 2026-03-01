@@ -1,1 +1,4 @@
 @import 'tailwindcss';
+@theme {
+  --color-navy-dark: #1e2d45;
+}
