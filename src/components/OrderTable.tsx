@@ -53,6 +53,13 @@ const StatusBadge = ({ status }: { status: string }) => {
     </span>
   );
 };
+const STATUS_BAR_COLORS: Record<string, string> = {
+  OPEN: 'bg-blue-500',
+  FILLED: 'bg-green-600',
+  PARTIAL: 'bg-amber-500',
+  CANCELLED: 'bg-gray-500',
+  SELL: 'bg-red-500',
+};
 
 export default function OrderTable({
   orders,
@@ -143,12 +150,19 @@ export default function OrderTable({
                 >
                   {/* Order ID */}
                   <td
-                    className='px-3 py-1.5 whitespace-nowrap font-mono text-xs'
+                    className='relative pl-4 py-1.5 whitespace-nowrap font-mono text-xs'
                     style={{
                       borderBottom: '1px solid #1e2a3a',
                       color: '#cbd5e1',
                     }}
                   >
+                    {/* STATUS SIDE BAR */}
+                    <span
+                      className={`absolute left-0 top-1 bottom-1 w-[3px] rounded-r ${
+                        STATUS_BAR_COLORS[order.status] ?? 'bg-slate-600'
+                      }`}
+                    />
+
                     <span
                       style={
                         isSelected
